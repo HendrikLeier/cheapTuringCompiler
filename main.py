@@ -2,6 +2,8 @@ all_states = []
 all_signs = []
 final_state_name = "FINAL"
 
+""" on_status on_sign direction new_sign new_state """
+
 
 def parse(filename):
     code_file = open(filename, "r")
@@ -19,14 +21,15 @@ def parse(filename):
 
         state = state.replace("\n", "")
 
-        if on_state == "FINAL":
+        if on_state == final_state_name:
             raise Exception("You are not allowed to define FINAL!")
+
+        append_if_not_in_list(on_state, all_states)
+        append_if_not_in_list(on_sign, all_signs)
 
         if state != final_state_name:
             append_if_not_in_list(state, all_states)
         append_if_not_in_list(sign, all_signs)
-        append_if_not_in_list(on_state, all_states)
-        append_if_not_in_list(on_sign, all_signs)
 
         if on_state not in commands.keys():
             commands[on_state] = {}
@@ -46,7 +49,7 @@ def parse(filename):
 
 def sort_commands(commands):
     while len(all_signs) < 4:
-        all_signs.append(all_signs[0])
+        all_signs.append(-1)
 
     out = []
     for state in all_states:
@@ -54,7 +57,7 @@ def sort_commands(commands):
             if sign in commands[state].keys():
                 out.append(commands[state][sign])
             else:
-                out.append([0, 0, 0])
+                out.append([1, 3, 31])
     return out
 
 
@@ -65,9 +68,9 @@ def get_direction_bit(direction):
         return 1
 
 
-def append_if_not_in_list(object, list):
-    if object not in list:
-        list.append(object)
+def append_if_not_in_list(obj, lst):
+    if obj not in lst:
+        lst.append(obj)
 
 
 def write(sorted_out_list):
